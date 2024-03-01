@@ -1,0 +1,7 @@
+spring:
+  ai:
+    ollama:
+      ## 默认地址无需配置
+      base-url: http://localhost:11434
+      chat:
+        model: gemma:2b
