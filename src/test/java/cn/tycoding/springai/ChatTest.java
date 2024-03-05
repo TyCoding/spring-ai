@@ -3,7 +3,7 @@ package cn.tycoding.springai;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.ai.ollama.OllamaChatClient;
+import org.springframework.ai.openai.OpenAiChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -12,10 +12,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @SpringBootTest
-class SpringAiApplicationTests {
+class ChatTest {
 
     @Autowired
-    private OllamaChatClient chatClient;
+//    private OllamaChatClient chatClient;
+    private OpenAiChatClient chatClient;
 
     @Test
     void contextLoads() {
@@ -38,19 +39,15 @@ class SpringAiApplicationTests {
                 根据：{message} 场景写100字的总结报告
                 """);
         Prompt prompt = promptTemplate.create(Map.of("message", message));
-        chatClient.stream(prompt).subscribe(
-                chatResponse -> {
-                    System.out.println("response: " + chatResponse.getResult().getOutput().getContent());
-                },
-                throwable -> {
-                    System.err.println("err: " + throwable.getMessage());
-                },
-                () -> {
-                    System.out.println("complete~!");
-                    // 关闭函数
-                    future.complete(null);
-                }
-        );
+        chatClient.stream(prompt).subscribe(chatResponse -> {
+            System.out.println("response: " + chatResponse.getResult().getOutput().getContent());
+        }, throwable -> {
+            System.err.println("err: " + throwable.getMessage());
+        }, () -> {
+            System.out.println("complete~!");
+            // 关闭函数
+            future.complete(null);
+        });
         future.get();
     }
 }
